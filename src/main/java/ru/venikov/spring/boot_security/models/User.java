@@ -30,4 +30,9 @@ public class User {
     @NotEmpty(message = "Email should not be empty")
     @Email(message = "Email should be valid")
     private String email;
+
+    @Column(name = "password")
+    @NotEmpty(message = "Password should not be empty")
+    @Size(min = 3, message = "the password must be three or more characters")
+    private String password;
 }

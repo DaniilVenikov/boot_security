@@ -8,6 +8,7 @@ import ru.venikov.spring.boot_security.models.User;
 import ru.venikov.spring.boot_security.repositories.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -51,5 +52,11 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public void delete(long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> checkUsersName(String name) {
+        return userRepository.findByName(name);
     }
 }
