@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.venikov.spring.boot_security.models.User;
 import ru.venikov.spring.boot_security.repositories.UserRepository;
 import ru.venikov.spring.boot_security.security.OurUserDetails;
@@ -23,6 +24,7 @@ public class UserDetailService implements UserDetailsService {
 
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByName(username);
         if (user.isEmpty()) {

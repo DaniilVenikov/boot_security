@@ -2,9 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>User</title>
+    <title>User page</title>
 </head>
 <body>
+User page
 <table class="table">
     <thead>
     <tr>
@@ -24,10 +25,8 @@
 
 <br/>
 
-<a th:href="@{/admin/users/{id}/edit(id=${user.getId()})}">Edit</a>
-
-<form th:method="DELETE" th:action="@{/admin/users/{id}(id=${user.getId()})}">
-    <input type="submit" value="Delete"/>
+<form th:action="@{/logout}" th:method="POST">
+    <input type="submit" value="Logout">
 </form>
 </body>
 </html>

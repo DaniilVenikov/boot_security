@@ -7,6 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -35,4 +36,10 @@ public class User {
     @NotEmpty(message = "Password should not be empty")
     @Size(min = 3, message = "the password must be three or more characters")
     private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_roles",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 }

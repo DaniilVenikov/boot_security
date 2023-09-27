@@ -2,73 +2,32 @@ package ru.venikov.spring.boot_security.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import ru.venikov.spring.boot_security.models.User;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import ru.venikov.spring.boot_security.security.OurUserDetails;
 import ru.venikov.spring.boot_security.services.UserService;
 
-import javax.validation.Valid;
-
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UsersController {
 
     private final UserService userService;
-
     @Autowired
     public UsersController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping()
-   public String index(Model model) {
-        model.addAttribute("users", userService.getUsers());
-        return "index";
-   }
+    public String userPage(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        OurUserDetails userDetails = (OurUserDetails) authentication.getPrincipal();
 
-   @GetMapping("/{id}")
-   public String showUser(@PathVariable("id") int id, Model model) {
-        model.addAttribute("user", userService.getUser(id));
-        return "showUser";
-   }
+        model.addAttribute("user", userService.getUser(userDetails.getUser().getId()));
 
-   @GetMapping("/new")
-   public String newUser(@ModelAttribute("user") User user) {
-        return "newUser";
-   }
-
-   @PostMapping
-   public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
-            return "newUser";
-        }
-
-        userService.save(user);
-        return "redirect:/users";
-   }
-
-   @GetMapping("/{id}/edit")
-   public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("user", userService.getUser(id));
-        return "edit";
-   }
-
-   @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
-                         @PathVariable("id") int id) {
-        if(bindingResult.hasErrors()) {
-            return "edit";
-        }
-
-        userService.update(id, user);
-        return "redirect:/users";
-   }
-
-   @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
-        userService.delete(id);
-        return "redirect:/users";
-   }
+        return "user";
+    }
 }

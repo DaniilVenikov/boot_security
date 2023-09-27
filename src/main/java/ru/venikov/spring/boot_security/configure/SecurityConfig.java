@@ -2,40 +2,41 @@ package ru.venikov.spring.boot_security.configure;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.venikov.spring.boot_security.services.UserDetailService;
 
-@Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailService userDetailService;
+    private final SuccessHandler successHandler;
 
     @Autowired
-    public SecurityConfig(UserDetailService userDetailService) {
+    public SecurityConfig(UserDetailService userDetailService, SuccessHandler successHandler) {
         this.userDetailService = userDetailService;
+        this.successHandler = successHandler;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/auth/login", "/auth/registration", "/error").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().hasAnyRole("USER", "ADMIN")
                 .and()
-                .formLogin().loginPage("/auth/login")
+                .formLogin()
+                .successHandler(successHandler)
                 .loginProcessingUrl("/process_login")
-                .defaultSuccessUrl("/hello", true)
                 .failureUrl("/auth/login?error")
                 .and()
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/auth/login");
+                .logout().logoutUrl("/logout")
+                .logoutSuccessUrl("/login");
     }
     @Override
     protected void configure(AuthenticationManagerBuilder managerBuilder) throws Exception {

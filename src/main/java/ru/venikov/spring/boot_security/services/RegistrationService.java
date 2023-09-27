@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.venikov.spring.boot_security.models.Role;
 import ru.venikov.spring.boot_security.models.User;
 import ru.venikov.spring.boot_security.repositories.UserRepository;
+
+import java.util.Collections;
 
 @Service
 public class RegistrationService {
@@ -21,6 +24,8 @@ public class RegistrationService {
     @Transactional
     public void register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Collections.singleton(new Role(1L, "USER")));
+
         userRepository.save(user);
     }
 }
